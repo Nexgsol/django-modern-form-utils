@@ -1,0 +1,20 @@
+-r requirements.txt
+
+# Testing
+pytest>=7.0
+pytest-django>=4.5
+
+# Linting & Formatting (optional)
+flake8>=6.0
+black>=23.0.0
+
+# Coverage
+coverage>=6.5
+pytest-cov>=4.0
+
+# Tox for multi-version testing
+tox>=4.0
+
+# Editable installs and setup tools
+setuptools>=60
+wheel
