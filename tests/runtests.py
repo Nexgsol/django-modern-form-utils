@@ -16,7 +16,7 @@ def configure_settings():
         INSTALLED_APPS=[
             'django.contrib.contenttypes',
             'django.contrib.auth',
-            'form_utils',
+            'modern_form_utils',
             'tests',
         ],
         DATABASES={
