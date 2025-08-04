@@ -1,170 +1,187 @@
-# ==================== modern-form-utils
+==============================
+django-modern-form-utils
+==============================
 
-`modern-form-utils` is a modernized fork of the deprecated `django-form-utils` package, updated to support **Django 4.x and 5.x**, and compatible with **Python 3.8+**.
+``django-modern-form-utils`` is a modernized fork of the deprecated ``django-form-utils`` package, updated to support **Django 4.x and 5.x**, and compatible with **Python 3.8+**.
 
-This package provides reusable form enhancements and rendering utilities designed for modern Django projects:
+This package provides reusable form enhancements and rendering utilities designed for modern Django projects.
 
-# Features
+Features
+========
 
 1. **BetterForm** and **BetterModelForm**:
-
    - Organize form fields into **fieldsets** for improved layout.
-   - Attach **row-level attributes** (e.g. `class`, `style`) to each field.
+   - Attach **row-level attributes** (e.g. ``class``, ``style``) to each field.
 
 2. **Template Filters for Forms**:
-
-   - `label` — Custom label rendering.
-   - `value_text`, `selected_values` — Display selected choices as text.
-   - `optional`, `is_checkbox`, `is_multiple`, `is_select`, `is_radio` — Field-type-aware rendering helpers.
+   - ``label`` — Custom label rendering.
+   - ``value_text``, ``selected_values`` — Display selected choices as text.
+   - ``optional``, ``is_checkbox``, ``is_multiple``, ``is_select``, ``is_radio`` — Field-type-aware rendering helpers.
 
 3. **ClearableFileField / ClearableImageField**:
-
    - Show a checkbox to clear file/image fields at form level.
-   - Works out-of-the-box with Django Admin via `ClearableFileFieldsAdmin`.
+   - Works out-of-the-box with Django Admin via ``ClearableFileFieldsAdmin``.
 
 4. **ImageWidget**:
-
-   - Shows thumbnails for image fields (supports `sorl-thumbnail` or `easy-thumbnails`).
+   - Shows thumbnails for image fields (supports ``sorl-thumbnail`` or ``easy-thumbnails``).
 
 5. **AutoResizeTextarea Widget**:
-
-   - Automatically resizes `<textarea>` based on input.
+   - Automatically resizes ``<textarea>`` based on input.
    - jQuery-based enhancement.
 
-# Installation
+Installation
+============
 
-```bash
-pip install modern-form-utils
-```
+.. code-block:: bash
 
-Then, add it to your `INSTALLED_APPS`:
+   pip install django-modern-form-utils
 
-```python
-INSTALLED_APPS = [
-    ...
-    "modern_form_utils",
-]
-```
+Then, add it to your ``INSTALLED_APPS``:
 
-If you want to override the default templates, provide your own versions in: `templates/modern_form_utils/better_form.html` and `form.html`.
+.. code-block:: python
 
-# Usage
+   INSTALLED_APPS = [
+       ...
+       "modern_form_utils",
+   ]
 
-### BetterForm
+If you want to override the default templates, provide your own versions in:
+``templates/modern_form_utils/better_form.html`` and ``form.html``.
 
-```python
-from modern_form_utils.forms import BetterForm
+Usage
+=====
 
-class MyForm(BetterForm):
-    one = forms.CharField()
-    two = forms.CharField()
-    three = forms.CharField()
+BetterForm Example
+------------------
 
-    class Meta:
-        fieldsets = [
-            ("main", {"fields": ["two"], "legend": ""}),
-            ("Advanced", {
-                "fields": ["three", "one"],
-                "description": "Advanced fields",
-                "classes": ["advanced", "collapse"]
-            }),
-        ]
-        row_attrs = {
-            "one": {"style": "display: none"}
-        }
-```
+.. code-block:: python
 
-### ClearableFileField Example
+   from modern_form_utils.forms import BetterForm
 
-```python
-from modern_form_utils.fields import ClearableFileField
+   class MyForm(BetterForm):
+       one = forms.CharField()
+       two = forms.CharField()
+       three = forms.CharField()
 
-class MyModelForm(forms.ModelForm):
-    resume = ClearableFileField()
-```
+       class Meta:
+           fieldsets = [
+               ("main", {"fields": ["two"], "legend": ""}),
+               ("Advanced", {
+                   "fields": ["three", "one"],
+                   "description": "Advanced fields",
+                   "classes": ["advanced", "collapse"]
+               }),
+           ]
+           row_attrs = {
+               "one": {"style": "display: none"}
+           }
 
-### ImageWidget Example
+ClearableFileField Example
+--------------------------
 
-```python
-from modern_form_utils.widgets import ImageWidget
+.. code-block:: python
 
-class MyForm(forms.ModelForm):
-    avatar = forms.ImageField(widget=ImageWidget())
-```
+   from modern_form_utils.fields import ClearableFileField
 
-### AutoResizeTextarea Example
+   class MyModelForm(forms.ModelForm):
+       resume = ClearableFileField()
 
-```python
-from modern_form_utils.widgets import AutoResizeTextarea
+ImageWidget Example
+-------------------
 
-class MyForm(forms.Form):
-    description = forms.CharField(widget=AutoResizeTextarea())
-```
+.. code-block:: python
 
-# Template Filters
+   from modern_form_utils.widgets import ImageWidget
+
+   class MyForm(forms.ModelForm):
+       avatar = forms.ImageField(widget=ImageWidget())
+
+AutoResizeTextarea Example
+--------------------------
+
+.. code-block:: python
+
+   from modern_form_utils.widgets import AutoResizeTextarea
+
+   class MyForm(forms.Form):
+       description = forms.CharField(widget=AutoResizeTextarea())
+
+Template Filters
+================
 
 Load the template filters:
 
-```django
-{% load modern_form_utils %}
-```
+.. code-block:: django
+
+   {% load modern_form_utils %}
 
 Then use in templates:
 
-```django
-{{ form|render }}
-{{ form.fieldname|label:"Custom Label" }}
-{{ form.fieldname|value_text }}
-{% if form.fieldname|is_checkbox %}...{% endif %}
-```
+.. code-block:: django
 
-# Admin Integration
+   {{ form|render }}
+   {{ form.fieldname|label:"Custom Label" }}
+   {{ form.fieldname|value_text }}
+   {% if form.fieldname|is_checkbox %}...{% endif %}
+
+Admin Integration
+=================
 
 To make file fields in Django admin clearable:
 
-```python
-from modern_form_utils.admin import ClearableFileFieldsAdmin
+.. code-block:: python
 
-class MyAdmin(ClearableFileFieldsAdmin):
-    pass
-```
+   from modern_form_utils.admin import ClearableFileFieldsAdmin
+
+   class MyAdmin(ClearableFileFieldsAdmin):
+       pass
 
 To use ImageWidget in admin:
 
-```python
-class MyAdmin(admin.ModelAdmin):
-    formfield_overrides = {
-        models.ImageField: {"widget": ImageWidget},
-    }
-```
+.. code-block:: python
 
-# Settings
+   class MyAdmin(admin.ModelAdmin):
+       formfield_overrides = {
+           models.ImageField: {"widget": ImageWidget},
+       }
 
-### JQUERY\_URL
+Settings
+========
 
-```python
-JQUERY_URL = "https://code.jquery.com/jquery-3.6.0.min.js"
-```
+JQUERY\_URL
+-----------
+
+.. code-block:: python
+
+   JQUERY_URL = "https://code.jquery.com/jquery-3.6.0.min.js"
 
 If unset, defaults to:
 
-```http
-https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js
-```
+::
 
-# Contributing
+   https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js
+
+Contributing
+============
 
 - Fork this repo
-- Make sure tests pass via `python runtests.py`
+- Make sure tests pass via ``python runtests.py``
 - Supports Django 3.2, 4.2, 5.0+ on Python 3.8–3.12
 
-# Credits
+Credits
+=======
 
-Original author: Carl Meyer (django-form-utils)
+Original author: **Carl Meyer** (django-form-utils)
 
-This package: Updated and maintained by [Muhammed Ziauldin / ziauldin123] under the name `modern-form-utils`.
+This package: Updated and maintained by **Muhammad Ziauldin**
 
-# License
+GitHub: https://github.com/Nexgsol/people/ziauldin123
+
+Organization: https://github.com/Nexgsol
+
+Package: ``django-modern-form-utils``
+
+License
+=======
 
 BSD License (same as the original)
-
