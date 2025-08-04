@@ -9,7 +9,8 @@ from django.db.models.fields.files import (
     FieldFile, ImageFieldFile, FileField, ImageField)
 from django.test import TestCase
 
-from mock import patch
+from unittest.mock import patch
+
 
 from modern_form_utils.forms import BetterForm, BetterModelForm
 from modern_form_utils.widgets import ImageWidget, ClearableFileInput
