@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Django specific
+*.log
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+.env
+
+# Test output
+coverage.xml
+htmlcov/
+.tox/
+.noseids
+.pytest_cache/
+tests/media/tiny_png_*
+
+# Git & metadata
+.DS_Store
+.HGREV
+*.swp
+*.bak
+
+# VSCode or IDE
+.vscode/
+.idea/

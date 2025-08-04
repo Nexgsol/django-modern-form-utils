@@ -1,0 +1,17 @@
+syntax: regexp
+
+^dist/
+^build/
+^modern_form_utils\.egg-info/
+^django_form_utils\.egg-info/
+^tests/media/tiny_png
+^HGREV$
+^\.coverage$
+^\.tox/
+^\.pytest_cache/
+^__pycache__/
+^.*\.py[co]$
+^\.DS_Store$
+^\.idea/
+^\.vscode/
+^\.env$

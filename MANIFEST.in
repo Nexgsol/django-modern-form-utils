@@ -1,0 +1,13 @@
+include AUTHORS.rst
+include CHANGES.rst
+include LICENSE.txt
+include MANIFEST.in
+include README.rst
+include CONTRIBUTING.rst
+include HGREV
+include Pyproject.toml
+
+recursive-include modern_form_utils/templates *.html
+recursive-include modern_form_utils/media/modern_form_utils/js *.js
+recursive-include modern_form_utils/static *.js
+recursive-include modern_form_utils/static *.css
