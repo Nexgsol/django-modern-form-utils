@@ -29,7 +29,7 @@ def render(form, template_name=None):
         default = 'form_utils/better_form.html,' + default
 
     tpl = select_template_from_string(template_name or default)
-    return tpl.render(Context({'form': form}))
+    return tpl.render({'form': form})
 
 
 @register.filter
