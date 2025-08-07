@@ -1,15 +1,18 @@
+import importlib
 from django import forms
 from django import template
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.fields.files import (
     FieldFile, ImageFieldFile, FileField, ImageField)
 from django.test import TestCase
+from django.conf import settings as real_settings
 
 from unittest.mock import patch
 
+from modern_form_utils.admin import ClearableFileFieldsAdmin
 from modern_form_utils.forms import BetterForm, BetterModelForm
 from modern_form_utils.widgets import ImageWidget, ClearableFileInput
-from modern_form_utils.fields import ClearableFileField, ClearableImageField
+from modern_form_utils.fields import ClearableFileField, ClearableImageField, FakeEmptyFieldFile
 
 from .models import Person, Document
 
@@ -802,3 +805,88 @@ class FieldFilterTests(TestCase):
         """`is_radio` detects a non-radio select."""
         f = self.form()
         self.assertFalse(self.form_utils.is_radio(f["level"]))
+
+
+class FieldUtilsTests(TestCase):
+    def test_fake_empty_fieldfile_url_property(self):
+        obj = FakeEmptyFieldFile()
+        self.assertEqual(obj.url, '')
+
+    def test_fake_empty_field_file_save_and_delete(self):
+        fake_file = FakeEmptyFieldFile()
+        self.assertEqual(fake_file.save(), '')
+        self.assertEqual(fake_file.save('foo', bar='baz'), '')
+        self.assertIsNone(fake_file.delete())
+        self.assertIsNone(fake_file.delete('foo', bar='baz'))
+
+    def test_compress_returns_fake_empty_field_file(self):
+        field = ClearableFileField()
+        data_list = ['', True]  # No file uploaded, checkbox checked
+        result = field.compress(data_list)
+        from modern_form_utils.fields import FakeEmptyFieldFile
+        assert isinstance(result, FakeEmptyFieldFile)
+
+    def test_compress_returns_none_when_empty(self):
+        field = ClearableFileField()
+        # Case 1: data_list is None
+        result = field.compress(None)
+        assert result is None
+        # Case 2: data_list is []
+        result = field.compress([])
+        assert result is None
+        # Case 3: data_list is too short
+        result = field.compress(['something'])
+        assert result is None
+
+
+class DummyFileDbField:
+    choices = ()
+    def formfield(self, **kwargs):
+        return forms.FileField()
+
+
+class DummyNonFileDbField:
+    choices = ()
+    def formfield(self, **kwargs):
+        return forms.CharField()
+
+
+class AdminUtilsTests(TestCase):
+    def test_formfield_for_dbfield_filefield(self):
+        admin_class = ClearableFileFieldsAdmin
+        db_field = DummyFileDbField()
+        admin_instance = admin_class.__new__(admin_class)
+        field = admin_instance.formfield_for_dbfield(db_field, None)
+        self.assertIsInstance(field, ClearableFileField)
+
+    def test_formfield_for_dbfield_nonfilefield(self):
+        admin_class = ClearableFileFieldsAdmin
+        db_field = DummyNonFileDbField()
+        admin_instance = admin_class.__new__(admin_class)
+        field = admin_instance.formfield_for_dbfield(db_field, None)
+        self.assertIsInstance(field, forms.CharField)
+
+
+class SettingsTests(TestCase):
+    def test_jquery_url_default(self):
+        from modern_form_utils.settings import JQUERY_URL
+        self.assertEqual(
+            JQUERY_URL,
+            'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'
+        )
+
+    def test_jquery_url_override(self):
+        # Use create=True so patch.object works even if JQUERY_URL is missing
+        with patch.object(real_settings, 'JQUERY_URL', 'https://example.com/jquery.js', create=True), \
+             patch.object(real_settings, 'STATIC_URL', '/static/', create=True):
+            import modern_form_utils.settings as mfu_settings
+            importlib.reload(mfu_settings)
+            self.assertEqual(mfu_settings.JQUERY_URL, 'https://example.com/jquery.js')
+
+    def test_jquery_url_relative_path(self):
+
+        with patch.object(real_settings, 'JQUERY_URL', 'js/jquery.js', create=True), \
+            patch.object(real_settings, 'STATIC_URL', '/static/', create=True):
+            import modern_form_utils.settings as mfu_settings
+            importlib.reload(mfu_settings)
+            self.assertEqual(mfu_settings.JQUERY_URL, '/static/js/jquery.js')
