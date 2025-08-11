@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>django-modern-form-utils — Modern Django form widgets & helpers</title>
+  <meta name="description" content="django-modern-form-utils: modern, tested utilities and widgets for Django forms. Easy install, clean APIs, Django 3.2–5.0 and Python 3.8–3.12 support." />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="django-modern-form-utils" />
+  <meta property="og:description" content="Modern widgets & utilities for Django forms." />
+  <meta property="og:type" content="website" />
+  <!-- <meta property="og:url" content="https://github.io/nexgsol/django-modern-form-utils/" /> -->
+  <meta property="og:image" content="https://img.shields.io/pypi/v/django-modern-form-utils.svg" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- JSON‑LD: package metadata (adjust as needed) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "django-modern-form-utils",
+    "applicationCategory": "DeveloperTool",
+    "operatingSystem": "Any",
+    "softwareVersion": "latest",
+    "url": "https://github.com/nexgsol/django-modern-form-utils",
+    "downloadUrl": "https://pypi.org/project/django-modern-form-utils/",
+    "programmingLanguage": "Python",
+    "maintainer": {
+      "@type": "Person",
+      "name": "Muhammad Zia ul din Ashraf"
+    }
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #0f172a;
+      --text: #e6e8ef;
+      --muted: #a9b1c6;
+      --brand: #5b9cff;
+      --brand-2: #22d3ee;
+      --border: rgba(255,255,255,0.08);
+      --code: #0b132b;
+    }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #f8fafc; --panel:#ffffff; --text:#0b1020; --muted:#334155; --border: rgba(15,23,42,0.1); --code:#0f172a; }
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(91,156,255,.18), transparent 60%),
+                  radial-gradient(1000px 600px at 120% 10%, rgba(34,211,238,.15), transparent 60%), var(--bg);
+      color: var(--text);
+    }
+    a { color: var(--brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 0 10px; border-bottom: 1px solid var(--border); }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      display:flex; align-items:center; justify-content:center; color:white; font-weight:800; letter-spacing:.5px;
+      box-shadow: 0 6px 24px rgba(91,156,255,.25);
+    }
+    nav a { margin-left: 16px; color: var(--muted); }
+    .hero { display:grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items:center; padding: 36px 0 10px; }
+    @media (max-width: 900px){ .hero{ grid-template-columns: 1fr; } }
+    h1 { font-size: clamp(28px, 4vw, 44px); line-height:1.2; margin: 0 0 10px; }
+    .subtitle { color: var(--muted); font-size: 1.05rem; margin-bottom: 18px; }
+    .badges img { vertical-align: middle; margin-right: 6px; margin-bottom: 10px; }
+    .cta { display:flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 0; }
+    .btn { display:inline-flex; align-items:center; gap:10px; padding: 10px 14px; border:1px solid var(--border); border-radius: 12px; background: var(--panel); color: var(--text); text-decoration:none; box-shadow: 0 6px 20px rgba(0,0,0,.12); }
+    .btn.primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color:#fff; border:none; }
+    .btn:hover { transform: translateY(-1px); transition: .15s ease; text-decoration: none; }
+
+    .section { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); }
+    h2 { font-size: 1.6rem; margin: 0 0 10px; }
+    h3 { margin: 24px 0 6px; font-size: 1.15rem; }
+    .grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 900px){ .grid{ grid-template-columns:1fr; } }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
+    .muted { color: var(--muted); }
+
+    pre { background: var(--code); color: #e9ecf1; padding: 14px 16px; border-radius: 12px; overflow: auto; border: 1px solid var(--border); position: relative; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 0.95rem; }
+    .copy { position: absolute; top: 8px; right: 8px; font-size: 12px; padding: 6px 8px; background: #1f2937; color:#e5e7eb; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); }
+    .copy:active { transform: scale(0.98); }
+
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: rgba(255,255,255,0.02); }
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+    footer { margin: 40px 0 10px; color: var(--muted); font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">MFU</div>
+        <div>
+          <strong>django-modern-form-utils</strong><br>
+          <span class="muted">Modern Django form widgets & utilities</span>
+        </div>
+      </div>
+      <nav>
+        <a href="#install">Install</a>
+        <a href="#quickstart">Quickstart</a>
+        <a href="#features">Features</a>
+        <a href="#compat">Compat</a>
+        <a href="#links">Links</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>Cleaner, faster, nicer Django forms</h1>
+        <p class="subtitle">A tiny, well‑tested set of widgets & helpers for Django forms. Batteries included, production ready.</p>
+        <div class="badges">
+          <img alt="PyPI" src="https://img.shields.io/pypi/v/django-modern-form-utils.svg" />
+          <img alt="Python versions" src="https://img.shields.io/pypi/pyversions/django-modern-form-utils.svg" />
+          <img alt="License" src="https://img.shields.io/pypi/l/django-modern-form-utils.svg" />
+          <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/ziauldin123/django-modern-form-utils/test.yml?label=tests" />
+        </div>
+        <div class="cta">
+          <a class="btn primary" href="#install">Get started</a>
+          <a class="btn" href="https://pypi.org/project/django-modern-form-utils/">PyPI</a>
+          <a class="btn" href="https://github.com/nexgsol/django-modern-form-utils">GitHub</a>
+        </div>
+      </div>
+      <div class="card">
+        1<ul>
+          <li><code>BetterForm</code> & <code>BetterModelForm</code> with <strong>fieldsets</strong> and per-row <strong>row_attrs</strong> for tidy layouts.</li>
+          <li>Rich <strong>template filters</strong>: <code>label</code>, <code>value_text</code>, <code>selected_values</code>, <code>optional</code>, <code>is_checkbox</code>, <code>is_multiple</code>, <code>is_select</code>, <code>is_radio</code>.</li>
+          <li><code>ClearableFileField</code>/<code>ClearableImageField</code> + <code>ClearableFileFieldsAdmin</code>, <code>ImageWidget</code> with thumbnails, and <code>AutoResizeTextarea</code>.</li>
+        </ul>
+        <p class="muted" style="margin:0">Ship forms your users enjoy filling — and you enjoy maintaining.</p>
+      </div>
+    </section>
+
+    <section id="install" class="section">
+      <h2>Install</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Stable (PyPI)</h3>
+          <pre><button class="copy" data-copy>Copy</button><code>pip install django-modern-form-utils</code></pre>
+          <p class="muted">Recommended for production.</p>
+        </div>
+        <div class="card">
+          <h3>Preview (TestPyPI)</h3>
+          <pre><button class="copy" data-copy>Copy</button><code>pip install -i https://test.pypi.org/simple/ django-modern-form-utils</code></pre>
+          <p class="muted">Try pre‑releases or verify a new build.</p>
+        </div>
+        <div class="card">
+          <h3>Add to Django</h3>
+<pre><button class="copy" data-copy>Copy</button><code>INSTALLED_APPS = [
+    # ...
+    "modern_form_utils",
+]</code></pre>
+          <p class="muted">No migrations required for basic widgets.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="quickstart" class="section">
+      <h2>Quickstart</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Use the <code>ImageWidget</code> in a ModelForm</h3>
+<pre><button class="copy" data-copy>Copy</button><code>from django import forms
+from modern_form_utils.widgets import ImageWidget
+from .models import Profile
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ["avatar"]
+        widgets = {
+            "avatar": ImageWidget(),
+        }
+</code></pre>
+          <p class="muted">Renders a clean file input with thumbnail preview (when available).</p>
+        </div>
+        <div class="card">
+          <h3>Plain Form usage</h3>
+<pre><button class="copy" data-copy>Copy</button><code>from django import forms
+from modern_form_utils.widgets import ImageWidget
+
+class UploadForm(forms.Form):
+    image = forms.ImageField(widget=ImageWidget())
+</code></pre>
+          <p class="muted">Drop‑in replacement for the default file widget.</p>
+        </div>
+        <div class="card">
+          <h3>Templates</h3>
+<pre><button class="copy" data-copy>Copy</button><code>{% load static %}
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="button">Save</button>
+</form>
+</code></pre>
+          <p class="muted">No special template tags required — standard Django forms.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <h2>Features</h2>
+      <div class="grid">
+        <div class="card"><h3>Beautiful defaults</h3><p class="muted">Thoughtful rendering while keeping full control via Django forms and widgets API.</p></div>
+        <div class="card"><h3>Tiny surface area</h3><p class="muted">Focus on doing a few things really well. Easy to read, easy to extend.</p></div>
+        <div class="card"><h3>Fully tested</h3><p class="muted">Continuous Integration across multiple Python and Django versions mirrors real‑world projects.</p></div>
+      </div>
+    </section>
+    <section id="components" class="section">
+      <h2>Core components</h2>
+      <div class="grid">
+        <div class="card"><h3><code>BetterForm</code> & <code>BetterModelForm</code></h3><p class="muted">Define <strong>fieldsets</strong> and per-row <strong>row_attrs</strong> (classes, styles) for tidy layouts.</p></div>
+        <div class="card"><h3>Template filters</h3><p class="muted"><code>label</code>, <code>value_text</code>, <code>selected_values</code>, <code>optional</code>, <code>is_checkbox</code>, <code>is_multiple</code>, <code>is_select</code>, <code>is_radio</code>.</p></div>
+        <div class="card"><h3>Clearable fields</h3><p class="muted"><code>ClearableFileField</code> / <code>ClearableImageField</code> + <code>ClearableFileFieldsAdmin</code> add a “clear” checkbox for files/images.</p></div>
+        <div class="card"><h3><code>ImageWidget</code></h3><p class="muted">Shows thumbnails for image fields (works with <code>sorl-thumbnail</code> or <code>easy-thumbnails</code> if installed).</p></div>
+        <div class="card"><h3><code>AutoResizeTextarea</code></h3><p class="muted">Auto-expands based on content; small jQuery enhancement with sane defaults.</p></div>
+      </div>
+    </section>
+
+    <section id="usage" class="section">
+      <h2>Usage examples</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>BetterForm</h3>
+<pre><button class="copy" data-copy>Copy</button><code>from django import forms
+from modern_form_utils.forms import BetterForm
+
+class MyForm(BetterForm):
+    one = forms.CharField()
+    two = forms.CharField()
+    three = forms.CharField()
+
+    class Meta:
+        fieldsets = [
+            ("main", {"fields": ["two"], "legend": ""}),
+            ("Advanced", {
+                "fields": ["three", "one"],
+                "description": "Advanced fields",
+                "classes": ["advanced", "collapse"],
+            }),
+        ]
+        row_attrs = {
+            "one": {"style": "display: none"},
+        }</code></pre>
+        </div>
+        <div class="card">
+          <h3>ClearableFileField</h3>
+<pre><button class="copy" data-copy>Copy</button><code>from django import forms
+from modern_form_utils.fields import ClearableFileField
+
+class MyModelForm(forms.ModelForm):
+    resume = ClearableFileField()</code></pre>
+        </div>
+        <div class="card">
+          <h3>ImageWidget</h3>
+<pre><button class="copy" data-copy>Copy</button><code>from django import forms
+from modern_form_utils.widgets import ImageWidget
+
+class MyForm(forms.ModelForm):
+    avatar = forms.ImageField(widget=ImageWidget())</code></pre>
+        </div>
+        <div class="card">
+          <h3>AutoResizeTextarea</h3>
+<pre><button class="copy" data-copy>Copy</button><code>from django import forms
+from modern_form_utils.widgets import AutoResizeTextarea
+
+class MyForm(forms.Form):
+    description = forms.CharField(widget=AutoResizeTextarea())</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="filters" class="section">
+      <h2>Template filters</h2>
+      <div class="card">
+<pre><button class="copy" data-copy>Copy</button><code>{% load modern_form_utils %}
+{{ form|render }}
+{{ form.fieldname|label:"Custom Label" }}
+{{ form.fieldname|value_text }}
+{% if form.fieldname|is_checkbox %}...{% endif %}</code></pre>
+        <p class="muted">Available: <code>label</code>, <code>value_text</code>, <code>selected_values</code>, <code>optional</code>, <code>is_checkbox</code>, <code>is_multiple</code>, <code>is_select</code>, <code>is_radio</code>.</p>
+      </div>
+    </section>
+
+    <section id="admin" class="section">
+      <h2>Admin integration</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Clearable in admin</h3>
+<pre><button class="copy" data-copy>Copy</button><code>from modern_form_utils.admin import ClearableFileFieldsAdmin
+
+class MyAdmin(ClearableFileFieldsAdmin):
+    pass</code></pre>
+        </div>
+        <div class="card">
+          <h3>ImageWidget in admin</h3>
+<pre><button class="copy" data-copy>Copy</button><code>from django.db import models
+from modern_form_utils.widgets import ImageWidget
+
+class MyAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.ImageField: {"widget": ImageWidget},
+    }</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="settings" class="section">
+      <h2>Settings</h2>
+      <div class="card">
+        <p class="muted">Override the jQuery used by <code>AutoResizeTextarea</code> if needed:</p>
+<pre><button class="copy" data-copy>Copy</button><code>JQUERY_URL = "https://code.jquery.com/jquery-3.6.0.min.js"</code></pre>
+        <p class="muted">If unset, defaults to <code>https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js</code>.</p>
+      </div>
+    </section>
+
+    <section id="contrib" class="section">
+      <h2>Contributing & credits</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Contributing</h3>
+          <ul>
+            <li>Fork the repo and open a PR.</li>
+            <li>Run tests locally: <code>python runtests.py</code> (or <code>coverage run -m tests.runtests</code>).</li>
+            <li>Supported: Django 3.2, 4.2, 5.0+ on Python 3.8–3.12.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Credits</h3>
+          <p class="muted">Original <strong>django-form-utils</strong> by <strong>Carl Meyer</strong>.<br/>This package updated & maintained by <strong>Muhammad Ziauldin</strong>.</p>
+        </div>
+        <div class="card">
+          <h3>License</h3>
+          <p class="muted">BSD License (same as the original project).</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="compat" class="section">
+      <h2>Compatibility</h2>
+      <p class="muted">This matrix follows our CI (see <a href="https://github.com/nexgsol/django-modern-form-utils/actions">Actions</a>).</p>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Python</th>
+              <th>Django 3.2</th>
+              <th>Django 4.2</th>
+              <th>Django 5.0</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>3.8</td><td>✅</td><td>—</td><td>—</td></tr>
+            <tr><td>3.9</td><td>✅</td><td>✅</td><td>—</td></tr>
+            <tr><td>3.10</td><td>—</td><td>✅</td><td>✅</td></tr>
+            <tr><td>3.11</td><td>—</td><td>✅</td><td>✅</td></tr>
+            <tr><td>3.12</td><td>—</td><td>—</td><td>✅</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="links" class="section">
+      <h2>Links & support</h2>
+      <div class="grid">
+        <div class="card">
+            <li><a href="https://github.com/nexgsol/django-modern-form-utils">Source on GitHub</a></li>
+            <li><a href="https://pypi.org/project/django-modern-form-utils/">Package on PyPI</a></li>
+            <li><a href="https://test.pypi.org/project/django-modern-form-utils/">Package on TestPyPI</a></li>
+            <li><a href="https://github.com/ziauldin123">GitHub: ziauldin123</a></li>
+            <li><a href="https://github.com/Nexgsol">Organization: Nexgsol</a></li>
+            <li><a href="https://github.com/nexgsol/django-modern-form-utils/releases">Changelog</a></li>
+        </div>
+        <div class="card">
+          <h3>Contributing</h3>
+          <p class="muted">Issues and PRs are welcome. Please include a failing test when reporting bugs if possible.</p>
+          <ul>
+            <li>Run test suite: <code>coverage run -m tests.runtests</code></li>
+            <li>Style: keep code minimal and documented.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Security</h3>
+          <p class="muted">Please report vulnerabilities privately via GitHub Security Advisories.</p>
+          <p class="muted">License: BSD.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>© <span id="year"></span> django-modern-form-utils. Built with ♥. This page is served by GitHub Pages.</p>
+    </footer>
+  </div>
+
+  <script>
+    // Copy-to-clipboard for code blocks
+    document.querySelectorAll('[data-copy]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.nextElementSibling.innerText;
+        navigator.clipboard.writeText(code).then(() => {
+          const original = btn.textContent; btn.textContent = 'Copied!';
+          setTimeout(() => btn.textContent = original, 1200);
+        });
+      });
+    });
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
