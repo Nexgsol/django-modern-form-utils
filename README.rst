@@ -175,7 +175,7 @@ Original author: **Carl Meyer** (django-form-utils)
 
 This package: Updated and maintained by **Muhammad Ziauldin**
 
-GitHub: https://github.com/Nexgsol/people/ziauldin123
+GitHub: https://github.com/ziauldin123
 
 Organization: https://github.com/Nexgsol
 
