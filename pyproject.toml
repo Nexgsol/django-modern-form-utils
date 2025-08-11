@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "django-modern-form-utils"
-version = "2.0.0"
+version = "2.0.1"
 description = "Modernized form utilities for Django 3.2–5.2+"
 readme = { file = "README.rst", content-type = "text/x-rst" }
 requires-python = ">=3.8"
