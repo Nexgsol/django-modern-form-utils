@@ -5,7 +5,7 @@ with open("README.rst", encoding="utf-8") as f:
 
 setup(
     name='django-modern-form-utils',
-    version='2.0.1',  # or 2.0.0 if major refactor
+    version='2.0.2',  # or 2.0.0 if major refactor
     description='Modernized form utilities for Django 3.2–5.2+',
     long_description=long_description,
     long_description_content_type='text/x-rst',
