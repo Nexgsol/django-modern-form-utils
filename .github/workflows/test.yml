@@ -46,6 +46,7 @@ jobs:
         pip install -e .
         pip install -r requirements-dev.txt || true
 
-    - name: Run test suite
+    - name: Run tests with coverage
       run: |
-        python -m tests.runtests
+        coverage run --source=modern_form_utils -m tests.runtests
+        coverage report -m
