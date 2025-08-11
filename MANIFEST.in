@@ -9,5 +9,6 @@ include Pyproject.toml
 
 recursive-include modern_form_utils/templates *.html
 recursive-include modern_form_utils/media/modern_form_utils/js *.js
+recursive-include modern_form_utils/templatetags *.py
 recursive-include modern_form_utils/static *.js
 recursive-include modern_form_utils/static *.css

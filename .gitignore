@@ -33,3 +33,4 @@ tests/media/tiny_png_*
 # VSCode or IDE
 .vscode/
 .idea/
+-e "dist/\nbuild/\n*.egg-info/" 
