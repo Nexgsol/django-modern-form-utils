@@ -34,3 +34,4 @@ tests/media/tiny_png_*
 .vscode/
 .idea/
 -e "dist/\nbuild/\n*.egg-info/" 
+.pypirc
