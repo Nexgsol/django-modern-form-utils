@@ -48,4 +48,4 @@ jobs:
 
     - name: Run test suite
       run: |
-        python tests/runtests.py
+        python -m tests.runtests
