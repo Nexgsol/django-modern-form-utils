@@ -183,5 +183,4 @@ Package: ``django-modern-form-utils``
 
 License
 =======
-
 BSD License (same as the original)
