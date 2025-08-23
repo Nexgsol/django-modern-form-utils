@@ -8,9 +8,12 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models.fields.files import FileField, FieldFile, ImageField, ImageFieldFile
 from django.test import TestCase, override_settings
-
 from modern_form_utils.admin import ClearableFileFieldsAdmin
-from modern_form_utils.fields import ClearableFileField, ClearableImageField, FakeEmptyFieldFile
+from modern_form_utils.fields import (
+    ClearableFileField,
+    ClearableImageField,
+    FakeEmptyFieldFile
+)
 from modern_form_utils.forms import (
     BasePreviewFormMixin,
     BetterForm,
@@ -23,7 +26,6 @@ from modern_form_utils.widgets import (
     ImageWidget,
     InlineAutoResizeTextarea,
 )
-
 from .models import Document, Person
 
 
@@ -37,8 +39,8 @@ class ApplicationForm(BetterForm):
 
     class Meta:
         fieldsets = (('main', {'fields': ('name', 'position'), 'legend': ''}),
-                     ('Optional', {'fields': ('reference',),
-                                   'classes': ('optional',)}))
+                    ('Optional', {'fields': ('reference',),
+                    'classes': ('optional',)}))
 
 
 class InheritedForm(ApplicationForm):
@@ -59,7 +61,7 @@ class MudSlingerApplicationForm(ApplicationForm):
     class Meta:
         fieldsets = list(ApplicationForm.Meta.fieldsets)
         fieldsets[0] = ('main', {'fields': ('name', 'position', 'target'),
-                                 'description': 'Basic mudslinging info',
+                        'description': 'Basic mudslinging info',
                                  'legend': 'basic info'})
 
 
@@ -183,6 +185,7 @@ class InheritedMetaAbstractPersonForm(AbstractPersonForm):
                 'fields': ['title']
             })
         ]
+
 
 class BetterFormTests(TestCase):
     fieldset_target_data = {
@@ -399,11 +402,11 @@ class BetterFormTests(TestCase):
             class ErrorForm(BetterForm):
                 one = forms.CharField()
                 two = forms.CharField()
+
                 class Meta:
                     fieldsets = ((None, {'fields': ('one', 'two')}))
         with self.assertRaises((TypeError, ValueError)):
             _define_fieldsets_with_missing_comma()
-
 
     def test_modelform_fields(self):
         """
@@ -427,11 +430,10 @@ class BetterFormTests(TestCase):
         self.assertEqual(ExcludePartialPersonForm._meta.fields, None)
 
 
-
-
 class BoringForm(forms.Form):
     boredom = forms.IntegerField()
     excitement = forms.IntegerField()
+
 
 class TemplatetagTests(TestCase):
     boring_form_html = (
@@ -563,7 +565,6 @@ class ClearableFileInputTests(TestCase):
         html = widget.render('fieldname', 'tiny.png')
         self.assertIn('<input type="file"', html)
         self.assertNotIn('<img', html)
-
 
     def test_custom_file_widget_via_subclass(self):
         """
@@ -776,7 +777,8 @@ class FieldFilterTests(TestCase):
     def test_value_text(self):
         """``value_text`` filter returns value of field."""
         self.assertEqual(
-            self.form_utils.value_text(self.form({"name": "boo"})["name"]), "boo")
+            self.form_utils.value_text(
+                self.form({"name": "boo"})["name"]), "boo")
 
     def test_value_text_unbound(self):
         """``value_text`` filter returns default value of unbound field."""
@@ -880,12 +882,14 @@ class FieldUtilsTests(TestCase):
 
 class DummyFileDbField:
     choices = ()
+
     def formfield(self, **kwargs):
         return forms.FileField()
 
 
 class DummyNonFileDbField:
     choices = ()
+
     def formfield(self, **kwargs):
         return forms.CharField()
 
@@ -940,6 +944,7 @@ class PersonModelTests(TestCase):
         person = Person.objects.create(age=25, name="Bob")
         self.assertEqual(person.age, 25)
         self.assertEqual(person.name, "Bob")
+
 
 class DocumentModelTests(TestCase):
     def test_str_returns_filename(self):
@@ -1012,6 +1017,7 @@ class ThumbnailFunctionTests(TestCase):
             self.assertIn('width="50"', html)
             self.assertIn('height="60"', html)
 
+
 class AutoResizeTextareaTests(TestCase):
     def test_default_attrs(self):
         widget = AutoResizeTextarea()
@@ -1031,6 +1037,7 @@ class AutoResizeTextareaTests(TestCase):
         js_files = widget.media._js
         self.assertTrue(any('autogrow.js' in js for js in js_files))
         self.assertTrue(any('autoresize.js' in js for js in js_files))
+
 
 class InlineAutoResizeTextareaTests(TestCase):
     def test_default_attrs(self):
@@ -1236,3 +1243,107 @@ class BetterFormBaseMetaclassErrorTests(TestCase):
             "Creating a ModelForm without either the 'fields' attribute or the 'exclude'",
             str(ctx.exception)
         )
+
+from django import forms
+from modern_form_utils.forms import FieldsetCollection, Fieldset
+
+class DummyForm(forms.Form):
+    foo = forms.CharField()
+    bar = forms.CharField()
+
+class FieldsetCollectionTests(TestCase):
+    def setUp(self):
+        self.form = DummyForm()
+
+    def test_gather_fieldsets_returns_cached(self):
+        # Manually cache a fieldset
+        collection = FieldsetCollection(self.form, [])
+        dummy_fieldset = Fieldset(self.form, 'dummy', [], '', '', '')
+        collection._cached_fieldsets = [dummy_fieldset]
+        # Should return cached and not build new
+        result = collection._gather_fieldsets()
+        self.assertEqual(result, [dummy_fieldset])
+
+    def test_getitem_raises_keyerror(self):
+        # No fieldsets, so default fieldset with all fields, name is ''
+        collection = FieldsetCollection(self.form, [])
+        # Accessing a non-existent fieldset name should raise KeyError
+        with self.assertRaises(KeyError) as ctx:
+            collection['not_a_fieldset']
+        self.assertIn("Fieldset 'not_a_fieldset' not found", str(ctx.exception))
+    
+
+class FieldsetCollectionValueErrorTests(TestCase):
+    def setUp(self):
+        class DummyForm(forms.Form):
+            foo = forms.CharField()
+        self.form = DummyForm()
+
+    def test_gather_fieldsets_raises_valueerror_for_non_dict(self):
+        # options is not a dict
+        bad_fieldsets = [('main', ['foo', 'bar'])]
+        collection = FieldsetCollection(self.form, bad_fieldsets)
+        with self.assertRaises(ValueError) as ctx:
+            collection._gather_fieldsets()
+        self.assertIn("Fieldset definition must be a dictionary with a 'fields' key", str(ctx.exception))
+
+    def test_gather_fieldsets_raises_valueerror_for_missing_fields_key(self):
+        # options is a dict but missing 'fields'
+        bad_fieldsets = [('main', {'not_fields': ['foo', 'bar']})]
+        collection = FieldsetCollection(self.form, bad_fieldsets)
+        with self.assertRaises(ValueError) as ctx:
+            collection._gather_fieldsets()
+        self.assertIn("Fieldset definition must be a dictionary with a 'fields' key", str(ctx.exception))
+
+
+from modern_form_utils.forms import BetterForm, BetterModelForm
+
+class SimpleBetterForm(BetterForm):
+    foo = forms.CharField()
+    bar = forms.CharField()
+    class Meta:
+        row_attrs = {'foo': {'data-test': 'foo-attr'}}
+
+class SimpleBetterModelForm(BetterModelForm):
+    class Meta:
+        model = Person
+        fields = ['name', 'age']
+        row_attrs = {'name': {'data-test': 'name-attr'}}
+
+class BetterFormIterGetitemTests(TestCase):
+    def test_iter_marks_row_attrs(self):
+        form = SimpleBetterForm()
+        names = [bf.name for bf in form]
+        self.assertEqual(names, ['foo', 'bar'])
+        for bf in form:
+            self.assertTrue(hasattr(bf, 'row_attrs'))
+            # foo should have the custom attr, bar should have only required/optional
+            if bf.name == 'foo':
+                self.assertIn('data-test="foo-attr"', bf.row_attrs)
+            self.assertIn('class="required"', bf.row_attrs)
+
+    def test_getitem_marks_row_attrs(self):
+        form = SimpleBetterForm()
+        bf = form['foo']
+        self.assertTrue(hasattr(bf, 'row_attrs'))
+        self.assertIn('data-test="foo-attr"', bf.row_attrs)
+        self.assertIn('class="required"', bf.row_attrs)
+
+
+class BetterModelFormIterGetitemTests(TestCase):
+    def test_iter_marks_row_attrs(self):
+        person = Person.objects.create(name="Test", age=42)
+        form = SimpleBetterModelForm(instance=person)
+        names = [bf.name for bf in form]
+        self.assertEqual(names, ['name', 'age'])
+        for bf in form:
+            self.assertTrue(hasattr(bf, 'row_attrs'))
+            if bf.name == 'name':
+                self.assertIn('data-test="name-attr"', bf.row_attrs)
+
+    def test_getitem_marks_row_attrs(self):
+        person = Person.objects.create(name="Test", age=42)
+        form = SimpleBetterModelForm(instance=person)
+        bf = form['name']
+        self.assertTrue(hasattr(bf, 'row_attrs'))
+        self.assertIn('data-test="name-attr"', bf.row_attrs)
